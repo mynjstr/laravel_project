@@ -15,6 +15,10 @@ class Delete extends Component
 
     public function delete()
     {
+        if (!auth()->user()->can(\App\Enums\PermissionEnum::CREATE_TODOS->value)) {
+        session()->flash('error', 'You do not have permission to create todos.');
+        return $this->redirect(route('todos.index'), navigate: true);
+        }
         $this->todo->delete();
         return $this->redirect(route('todos.index'), navigate: true);
     }

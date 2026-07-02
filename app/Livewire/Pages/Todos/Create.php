@@ -16,6 +16,10 @@ class Create extends Component
 
     public function save()
     {
+        if (!auth()->user()->can(\App\Enums\PermissionEnum::CREATE_TODOS->value)) {
+        session()->flash('error', 'You do not have permission to create todos.');
+        return $this->redirect(route('todos.index'), navigate: true);
+        }
         $this->validate([
             'title' => 'required|min:3',
             'description' => 'nullable',
