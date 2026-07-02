@@ -10,23 +10,20 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
-        Permission::create(['name' => 'view todos']);
-        Permission::create(['name' => 'create todos']);
-        Permission::create(['name' => 'edit todos']);
-        Permission::create(['name' => 'delete todos']);
+        Permission::firstOrCreate(['name' => 'view todos']);
+        Permission::firstOrCreate(['name' => 'create todos']);
+        Permission::firstOrCreate(['name' => 'edit todos']);
+        Permission::firstOrCreate(['name' => 'delete todos']);
 
-        // Create roles and assign permissions
-        $admin = Role::create(['name' => 'admin']);
+        $admin = Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo(Permission::all());
 
-        $editor = Role::create(['name' => 'editor']);
+        $editor = Role::firstOrCreate(['name' => 'editor']);
         $editor->givePermissionTo(['view todos', 'create todos', 'edit todos']);
 
-        $viewer = Role::create(['name' => 'viewer']);
+        $viewer = Role::firstOrCreate(['name' => 'viewer']);
         $viewer->givePermissionTo('view todos');
     }
 }
