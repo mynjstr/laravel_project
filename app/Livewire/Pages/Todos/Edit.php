@@ -26,8 +26,8 @@ class Edit extends Component
     public function update()
     {
         if (!auth()->user()->can(\App\Enums\PermissionEnum::EDIT_TODOS->value)) {
-        session()->flash('error', 'You do not have permission to edit todos.');
-        return $this->redirect(route('todos.index'), navigate: true);
+            session()->flash('error', 'You do not have permission to edit todos.');
+            return $this->redirect(route('todos.index'), navigate: true);
         }
         $this->validate([
             'title' => 'required|min:3',
@@ -38,8 +38,13 @@ class Edit extends Component
             'title' => $this->title,
             'description' => $this->description,
             'is_completed' => $this->is_completed,
+        
         ]);
-
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($this->todo)
+            ->log("User updated Todo #{$this->todo->id}");
+            
         return $this->redirect(route('todos.index'), navigate: true);
     }
 

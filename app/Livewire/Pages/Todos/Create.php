@@ -17,18 +17,22 @@ class Create extends Component
     public function save()
     {
         if (!auth()->user()->can(\App\Enums\PermissionEnum::CREATE_TODOS->value)) {
-        session()->flash('error', 'You do not have permission to create todos.');
-        return $this->redirect(route('todos.index'), navigate: true);
+            session()->flash('error', 'You do not have permission to create todos.');
+            return $this->redirect(route('todos.index'), navigate: true);
         }
         $this->validate([
             'title' => 'required|min:3',
             'description' => 'nullable',
         ]);
 
-        Todo::create([
+        $todo = Todo::create([
             'title' => $this->title,
             'description' => $this->description,
         ]);
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($todo)
+            ->log("User created Todo #{$todo->id}");
 
         return $this->redirect(route('todos.index'), navigate: true);
     }
